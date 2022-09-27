@@ -33,132 +33,69 @@ commands:
             fi
             
 jobs:
-
-  install-backend-dependencies:
-    executor: node
-    steps:
-      - checkout
-      - run:
-          name: npm install
-          working_directory: ./backend
-          command: ls -la && npm install
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/node_modules
-
-
-  install-frontend-dependencies:
-   executor: node
-   steps:
-      - checkout
-      - run:
-          name: npm install
-          working_directory: ./frontend
-          command: ls -la && npm install
-      - persist_to_workspace:
-          root: .
-          paths:
-            - frontend/node_modules
-
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - restore_cache:
+          keys: [frontend-build]
       - run:
-          name: npm run build
-          working_directory: ./frontend
-          command: npm run build
+          name: Build front-end
+          command: |
+            # Your code here
+            exit 1
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
 
   build-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - restore_cache:
+          keys: [backend-build]
       - run:
-          name: npm run build
-          working_directory: ./backend
-          command: npm run build
-      - persist_to_workspace:
-          root: .
-          paths:
-            - backend/dist
+          name: Back-end build
+          command: |
+             # Your code here
+             exit 1
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install junit coverage reporter
-          working_directory: ./frontend
-          command: npm install --save-dev jest-junit
-      - run:
-          name: Run tests with JUnit as reporter
-          working_directory: ./frontend
-          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd && ls -la /tmp
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./test_results
-      - store_test_results:
-          path: ./frontend/test_results
-      - store_artifacts:
-          path: ./frontend/test_results
-
-
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
+                
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      # Docker image here
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install junit coverage reporter
-          working_directory: ./backend
-          command: npm install --save-dev jest-junit
-      - run:
-          name: Run tests with JUnit as reporter
-          working_directory: ./backend
-          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./test_results
-      - store_test_results:
-          path: ./backend/test_results
-      - store_artifacts:
-          path: ./backend/test_results
-
-
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
+            
   scan-frontend:
-      docker:
-      - image: circleci/node:13.8.0
+    docker:
+      # Docker image here
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check Frontend against security vulnerabilities
-          working_directory: ./frontend
-          command: npm audit --audit-level=critical
-
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
 
   scan-backend:
-      docker:
-      - image: circleci/node:13.8.0
+    docker:
+      # Docker image here
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check Backend against security vulnerabilities
-          working_directory: ./backend
-          command: npm audit --audit-level=critical
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
 
   deploy-infrastructure:
     docker:
@@ -329,12 +266,8 @@ cleanup:
 workflows:
   default:
     jobs:
-      - install-backend-dependencies
-      - install-frontend-dependencies    
-      - build-frontend:
-          requires: install-backend-dependencies
-      - build-backend:
-          requires: install-frontend-dependencies
+      - build-frontend
+      - build-backend
       - test-frontend:
           requires: [build-frontend]
       - test-backend:
