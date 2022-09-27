@@ -46,7 +46,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - backend/node_modules
+            - backend/node_modeules
 
 
   install-frontend-dependencies:
