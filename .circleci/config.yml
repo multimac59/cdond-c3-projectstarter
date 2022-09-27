@@ -35,7 +35,8 @@ commands:
 jobs:
 
   install-backend-dependencies:
-    executor: node
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
@@ -49,7 +50,8 @@ jobs:
 
 
   install-frontend-dependencies:
-   executor: node
+    docker:
+      - image: circleci/node:13.8.0
    steps:
       - checkout
       - run:
