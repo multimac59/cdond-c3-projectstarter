@@ -203,8 +203,8 @@ jobs:
       - run:
           name: install python
           command: |
-            sudo apt -y update 
-            sudo apt install -y python3
+            apt -y update 
+            apt install -y python3
 
       - run:
           name: Install ansible dependencies
