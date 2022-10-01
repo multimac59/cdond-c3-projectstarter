@@ -13,9 +13,8 @@
 #     state: present
 
 - name: "copy files from CircleCI to server"
-  become: true
   copy:
-    src: /root/project/backend
+    src: backend/.env.sample
     dest: /home/ubuntu
 
 
