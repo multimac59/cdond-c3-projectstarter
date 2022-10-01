@@ -183,6 +183,10 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["2a:59:dd:b7:40:8e:48:7f:6e:67:fd:19:d3:07:4f:77"]
 
+      - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
       # - attach_workspace:
       #     at: ~/
       # - install_ansible
