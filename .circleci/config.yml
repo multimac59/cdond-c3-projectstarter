@@ -203,8 +203,8 @@ jobs:
       - run:
           name: install python
           command: |
-            apk -y update 
-            apk install -y python3
+            yum -y update 
+            yum install -y python3
 
       - run:
           name: Install ansible dependencies
