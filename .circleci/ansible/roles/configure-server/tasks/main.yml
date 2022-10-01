@@ -15,7 +15,7 @@
 - name: "copy files from CircleCI to server"
   copy:
     #src: /backend
-    src: /root/project/backend
+    src: ../../backend
     dest: /home/ubuntu
     remote_src: yes
 
