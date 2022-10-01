@@ -156,6 +156,30 @@ jobs:
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}  
 
+  configure-infrastructure:
+    docker:
+      - image: python:3.9.0-alpine
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["2a:59:dd:b7:40:8e:48:7f:6e:67:fd:19:d3:07:4f:77"]
+      # attach workspace
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure server
+          command: |
+            cat inventory
+            ansible-playbook -i inventory configure-server.yaml
+          
+      - destroy-environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+
 workflows:
   default:
     jobs:
@@ -170,3 +194,5 @@ workflows:
       # - scan-backend:
       #     requires: [build-backend]
       - deploy-infrastructure
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
