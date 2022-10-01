@@ -1,5 +1,5 @@
 version: 2.1
-
+# e1007a3
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -177,7 +177,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.9.0-alpine # cimg/base:stable
+      - image: amazon/aws-cli #python:3.9.0-alpine # cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
@@ -197,18 +197,24 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
+          name: install python
+          command: |
+            sudo apt -y update 
+            sudo apt install -y python3
+
+      - run:
           name: Install ansible dependencies
           command: |
             apk add --update ansible
             ansible --version
-      - run:
-          name: Install AWS CLI dependencies
-          working_directory: /tmp
-          command: |
-            sudo apt-get update && sudo apt-get install -yy less
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+      # - run:
+      #     name: Install AWS CLI dependencies
+      #     working_directory: /tmp
+      #     command: |
+      #       sudo apt-get update && sudo apt-get install -yy less
+      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #       unzip awscliv2.zip
+      #       sudo ./aws/install
       - run:
           name: Configure server
           command: |
@@ -288,7 +294,8 @@ jobs:
             cd frontend
             npm install
             npm run build
-            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            #tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            tar -czvf artifact-e1007a3.tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -311,9 +318,10 @@ workflows:
       #     requires: [build-frontend]
       # - scan-backend:
       #     requires: [build-backend]
-      - deploy-infrastructure
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      # - deploy-infrastructure
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      - configure-infrastructure
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
