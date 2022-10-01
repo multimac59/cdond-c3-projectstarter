@@ -158,35 +158,35 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable #python:3.9.0-alpine
+      - image: python:3.9.0-alpine # cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["2a:59:dd:b7:40:8e:48:7f:6e:67:fd:19:d3:07:4f:77"]
-      # attach workspace
-      - attach_workspace:
-          at: ~/
-      - install_ansible
-      - install_awscli
-      - run:
-          name: Run Playbook and Configure server
-          command: |
-            cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
 
       # - attach_workspace:
       #     at: ~/
+      # - install_ansible
+      # - install_awscli
       # - run:
-      #     name: Install dependencies
+      #     name: Run Playbook and Configure server
       #     command: |
-      #       apk add --update ansible
-      #       ansible --version
-      # - run:
-      #     name: Configure server
-      #     command: |
-      #       cat inventory
-      #       ansible-playbook -i inventory configure-server.yaml
+      #       cd .circleci/ansible
+      #       cat inventory.txt
+      #       ansible-playbook -i inventory.txt configure-server.yml
+
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure server
+          command: |
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yaml
           
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}  
