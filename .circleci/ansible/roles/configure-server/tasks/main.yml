@@ -13,11 +13,10 @@
 #     state: present
 
 - name: "copy files from CircleCI to server"
+  become: true
   copy:
-    #src: /backend
-    src: ../../backend
+    src: /root/project/backend
     dest: /home/ubuntu
-    remote_src: yes
 
 
 - name: "install package dependencies"
