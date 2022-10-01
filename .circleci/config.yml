@@ -38,6 +38,36 @@ commands:
               npm install
               npm run migrations:revert
             fi
+
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+  install_awscli:
+    description: Install AWS CLI
+    steps:
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+  
+  install_nodejs:
+     description: Install Node.js 13
+     steps:
+      - run:
+          name: Install Node.js 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+
 jobs:
   build-frontend:
     docker:
@@ -177,7 +207,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: amazon/aws-cli #python:3.9.0-alpine # cimg/base:stable
+      - image: cimg/base:stable #amazon/aws-cli #python:3.9.0-alpine # cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
@@ -200,17 +230,19 @@ jobs:
 
       - attach_workspace:
           at: ~/
-      - run:
-          name: install python
-          command: |
-            yum -y update 
-            yum install -y python3
+      - install_ansible
+      - install_awscli
+      # - run:
+      #     name: install python
+      #     command: |
+      #       yum -y update 
+      #       yum install -y python3
 
-      - run:
-          name: Install ansible dependencies
-          command: |
-            yum add --update ansible
-            ansible --version
+      # - run:
+      #     name: Install ansible dependencies
+      #     command: |
+      #       apk add --update ansible
+      #       ansible --version
       # - run:
       #     name: Install AWS CLI dependencies
       #     working_directory: /tmp
