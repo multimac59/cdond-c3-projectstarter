@@ -518,3 +518,4 @@ workflows:
       # - cleanup:
       #     requires: [cloudfront-update]
       # - run-migrations
+      # for commit only
