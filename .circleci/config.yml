@@ -232,7 +232,7 @@ jobs:
             cat inventory.txt
 
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment
+  #    - destroy-environment
       # Here's where you will add some code to rollback on failure   
 
 
@@ -371,8 +371,8 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment
-      - revert-migrations
+#      - destroy-environment
+#      - revert-migrations
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
@@ -410,8 +410,8 @@ jobs:
               else
                 exit 1
               fi
-      - destroy-environment
-      - revert-migrations
+  #    - destroy-environment
+  #    - revert-migrations
       # Here's where you will add some code to rollback on failure  
 
   cloudfront-update:
@@ -445,7 +445,7 @@ jobs:
           root: ~/
           paths:
             - project/oldWorkflowID.txt
-      - destroy-environment
+#      - destroy-environment
       # Here's where you will add some code to rollback on failure  
 
   cleanup:
@@ -487,36 +487,32 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - deploy-infrastructure: 
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
-      # - run-migrations:
-      #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure: 
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
-    - deploy-backend
-    - deploy-frontend
-    - smoke-test:
-        requires: [deploy-backend, deploy-frontend]
