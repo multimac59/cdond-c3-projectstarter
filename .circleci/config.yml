@@ -1,5 +1,5 @@
 version: 2.1
-# e1007a3
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -7,6 +7,11 @@ commands:
       id:
         type: string  
     steps:
+      - run:
+          name: remove files from s3 bucket
+          when: on_fail
+          command: |
+            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
       - run:
           name: Destroy back-end environment
           when: on_fail
@@ -31,7 +36,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            export SUCCESS=$(curl --insecure "https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_<<parameters.id>>")
+            export SUCCESS=$(curl --insecure "https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_<< parameters.id >>")
             if (( $SUCCESS == 1 )); 
             then
               cd ~/project/backend
