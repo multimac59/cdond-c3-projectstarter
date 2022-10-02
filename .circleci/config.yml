@@ -5,7 +5,7 @@ commands:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
-        default: "mittamm"
+        default: "${CIRCLE_WORKFLOW_ID:0:7} "
         type: string   
     steps:
       - run:
@@ -20,7 +20,7 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       workflow_id:
-        default: "mittamm"
+        default: "${CIRCLE_WORKFLOW_ID:0:7} "
         type: string  
     steps:
       - restore_cache:
@@ -178,8 +178,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --stack-name "udapeople-backend-mittamm" \
-              --parameter-overrides ID="mittamm"  \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} " \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7} "  \
               --tags project=udapeople-backend
  
       - run:
@@ -187,8 +187,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --stack-name "udapeople-frontend-mittamm" \
-              --parameter-overrides ID="mittamm"  \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} " \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7} "  \
               --tags project=udapeople-frontend
       - run:
           name: Add back-end ip to ansible inventory
@@ -198,7 +198,7 @@ jobs:
             # cat inventory.txt
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text --filter Name=tag:Name,Values=backend-mittamm >> inventory.txt
+            --output text --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}  >> inventory.txt
             cat inventory.txt
 
             # echo "[all]" > ~/project/.circleci/ansible/inventory.txt
@@ -264,7 +264,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_mittamm  -d '1'
+              curl --insecure https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_${CIRCLE_WORKFLOW_ID:0:7}   -d '1'
             fi
      # - destroy-environment
      # Here's where you will add some code to rollback on failure      
@@ -288,7 +288,7 @@ jobs:
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filter Name=tag:Name,Values=backend-mittamm \
+              --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}  \
               --output text 
             )
 
@@ -304,8 +304,8 @@ jobs:
             rm -rf node_modules
             npm install
             npm run build
-            tar -czvf artifact-"mittamm".tar.gz dist
-            aws s3 cp dist s3://udapeople-mittamm --recursive
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7} ".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}  --recursive
       - destroy-environment
       - revert-migrations
       # Here's where you will add some code to rollback on failure      
@@ -357,12 +357,12 @@ jobs:
           name: Backend smoke test.
           command: |
               BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-                --filters "Name=tag:Name,Values=backend-mittamm" \
+                --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} " \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --output text)
               export API_URL=http://${BACKEND_PUBLIC_IP}:3030
               echo ${BACKEND_PUBLIC_IP}
-              echo backend-mittamm
+              echo backend-${CIRCLE_WORKFLOW_ID:0:7} 
               echo ${API_URL}
               if curl -s $API_URL/api/status | grep "ok"
               then
@@ -373,7 +373,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-              FRONTEND_WEBSITE=http://udapeople-mittamm.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+              FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7} .s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
               echo $FRONTEND_WEBSITE
               if curl -s $FRONTEND_WEBSITE | grep "Welcome"
               then
@@ -407,10 +407,10 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --parameter-overrides WorkflowID="mittamm" \
+              --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7} " \
               --stack-name InitialStack
 
-            echo Current Workflow ID: "mittamm"
+            echo Current Workflow ID: "${CIRCLE_WORKFLOW_ID:0:7} "
             cat ~/project/oldWorkflowID.txt
       - persist_to_workspace:
           root: ~/
@@ -436,14 +436,14 @@ jobs:
           command: |
             export oldWorkflowID=$(cat ~/project/oldWorkflowID.txt)
             echo OldWorkflowID: "${oldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID: "mittamm"
+            echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7} "
 
             # Fetch the stack names          
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"
     
-            if [[ "mittamm" != "${oldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7} " != "${oldWorkflowID}" ]]
             then
               echo "-------------------- Start Cleanup: Deleting S3 & its stack in progress 0%... --------------------"
               aws s3 rm "s3://udapeople-${oldWorkflowID}" --recursive
