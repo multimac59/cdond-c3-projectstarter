@@ -181,20 +181,18 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=udapeople-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --tags project=udapeople-backend
+              --tags project="udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
     
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=udapeople-frontend \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --tags project=udapeople-frontend
+              --tags project="udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
       - run:
           name: Add back-end ip to ansible inventory
@@ -208,7 +206,7 @@ jobs:
             echo "[web]" >> "$file"
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople-backend" \
+              --filters "Name=tag:project,Values=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> "$file"
             cat "$file"
       - persist_to_workspace:
@@ -260,11 +258,7 @@ jobs:
       - run:
           name: send migration status to kvdb.io
           command: |
-            curl --insecure https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
-            if grep -q "No migrations are pending" migrations_dump.txt
-            then
-              curl --insecure https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1
-            fi          
+            curl --insecure https://kvdb.io/76aJ5hyLgcFC1uYEYVXt2n/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d 1       
     # rollback code
       - destroy-environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7} 
