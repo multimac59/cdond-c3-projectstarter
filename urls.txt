@@ -1,4 +1,8 @@
 github repository url:
 https://github.com/multimac59/cdond-c3-projectstarter
 
+frontend website
 http://udapeople-53614e4.s3-website.us-east-1.amazonaws.com
+
+URL05 promethsus server
+http://ec2-54-165-177-89.compute-1.amazonaws.com:9090/graph
