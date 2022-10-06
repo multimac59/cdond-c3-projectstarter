@@ -2,4 +2,4 @@ URL01: github repository url:
 https://github.com/multimac59/cdond-c3-projectstarter
 
 URL02: S3 bucket public / FrontEnd url
-http://udapeople-b20def2.s3-website-us-east-1.amazonaws.com
+http://udapeople-2bedc21.s3-website-us-east-1.amazonaws.com
