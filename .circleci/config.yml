@@ -150,8 +150,7 @@ jobs:
             npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
-            npm update path-parse --depth 3
-            npm update path-parse --depth 10
+            
 
   scan-backend:
     docker:
@@ -168,6 +167,8 @@ jobs:
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             npm audit --audit-level=critical
+            npm update path-parse --depth 3
+            npm update path-parse --depth 10
 
   deploy-infrastructure:
     docker:
