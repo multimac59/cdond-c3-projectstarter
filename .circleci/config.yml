@@ -187,6 +187,8 @@ jobs:
             npm update ansi-regex --depth 7
             npm audit fix
             npm fund
+            npm update kind-of --depth 11
+            npm update ansi-regex --depth 7
             npm audit fix --audit-level=critical
             npm audit --audit-level=critical
 
