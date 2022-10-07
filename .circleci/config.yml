@@ -154,7 +154,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: circleci/node:18.10.0
     steps:
       - checkout
       - restore_cache:
@@ -166,10 +166,9 @@ jobs:
             npm install
             # npm audit fix --audit-level=critical --force
             # npm audit fix --force
+            npm audit fix
             npm audit fix --audit-level=critical
             npm audit --audit-level=critical
-            npm update path-parse --depth 3
-            npm update path-parse --depth 10
 
   deploy-infrastructure:
     docker:
