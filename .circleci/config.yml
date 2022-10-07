@@ -138,15 +138,9 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-      - install-nodejs
-      - install-awscli
-    # docker:
-    #   - image: circleci/node:13.8.0
-    # steps:
-    #   - checkout
       - restore_cache:
           keys: [frontend-build]
       - run:
@@ -160,9 +154,15 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install-nodejs
+    #  - install-awscli
+    # docker:
+    #   - image: cimg/node:16.13.2
+    # steps:
+    #   - checkout
       - restore_cache:
           keys: [backend-build]
       - run:
