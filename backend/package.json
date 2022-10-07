@@ -39,7 +39,7 @@
     "@nestjs/jwt": "^6.0.0",
     "@nestjs/passport": "^6.2.0",
     "@nestjs/platform-express": "^6.11.11",
-    "@nestjs/swagger": "^3.1.0",
+    "@nestjs/swagger": "6.1.2",
     "@nestjs/typeorm": "^6.3.4",
     "@types/jsonwebtoken": "^7.2.8",
     "@types/winston": "^2.4.4",
@@ -67,9 +67,9 @@
     "winston-slack-webhook": "^0.1.6"
   },
   "devDependencies": {
-    "@nestjs/testing": "^6.11.11",
+    "@nestjs/testing": "9.1.4",
     "@types/express": "^4.17.3",
-    "@types/jest": "^24.9.1",
+    "@types/jest": "29.1.229.1.2",
     "@types/joi": "^14.3.4",
     "@types/node": "^11.15.9",
     "@types/supertest": "^2.0.8",
