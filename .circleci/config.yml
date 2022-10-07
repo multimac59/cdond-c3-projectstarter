@@ -70,7 +70,7 @@ commands:
       - run:
           name: Install Node.js 13
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
 
 jobs:
@@ -157,12 +157,13 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - install-nodejs
+    #  - install-nodejs
     #  - install-awscli
-    # docker:
-    #   - image: cimg/node:16.13.2
-    # steps:
-    #   - checkout
+      - run:
+          name: Install Node.js 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt install -y nodejs
       - restore_cache:
           keys: [backend-build]
       - run:
@@ -172,8 +173,8 @@ jobs:
             npm install
             # npm audit fix --audit-level=critical --force
             # npm audit fix --force
-            npm audit fix
-            # npm audit fix --audit-level=critical
+            # npm audit fix
+            npm audit fix --audit-level=critical
             # npm audit --audit-level=critical
 
   deploy-infrastructure:
